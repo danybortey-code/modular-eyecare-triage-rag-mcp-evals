@@ -1,7 +1,0 @@
-{"case_id": "1", "user_input": "My eyes feel dry after staring at screens all day", "expected_topic": "dry eye", "expected_urgency": "Self-care / education"}
-
-{"case_id": "2", "user_input": "My vision is cloudy and headlights bother me at night", "expected_topic": "cataract", "expected_urgency": "Routine eye appointment"}
-
-{"case_id": "3", "user_input": "Straight lines look wavy and the center of my vision looks off", "expected_topic": "amd", "expected_urgency": "Urgent same-day evaluation"}
-
-{"case_id": "4", "user_input": "My eye is red and painful and my vision is blurry since yesterday", "expected_topic": "acute red eye", "expected_urgency": "Emergency care"}
