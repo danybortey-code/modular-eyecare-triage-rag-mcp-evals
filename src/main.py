@@ -1,10 +1,10 @@
-from intake_agent import IntakeAgent
+from llm_intake_agent import LLMIntakeAgent
 from knowledge_triage_agent import KnowledgeTriageAgent
 from response_safety_agent import ResponseSafetyAgent
 
 
 def main():
-    intake_agent = IntakeAgent()
+    intake_agent = LLMIntakeAgent()
     knowledge_triage_agent = KnowledgeTriageAgent()
     response_safety_agent = ResponseSafetyAgent()
 

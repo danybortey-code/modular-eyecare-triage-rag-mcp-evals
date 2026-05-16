@@ -14,22 +14,33 @@ class KnowledgeTriageAgent:
 
     def identify_topic(self, case_data: Dict) -> str:
         symptoms = case_data.get("symptoms", [])
+        symptoms_lower = [s.lower() for s in symptoms]
+
         known_condition = case_data.get("known_eye_condition")
         medication_context = case_data.get("medication_context")
 
         if known_condition == "glaucoma" or medication_context == "missed glaucoma drops":
             return "glaucoma"
 
-        if known_condition == "cataract" or "cloudy vision" in symptoms or "night glare" in symptoms:
+        if (
+            known_condition == "cataract"
+            or "cloudy vision" in symptoms_lower
+            or "night glare" in symptoms_lower
+        ):
             return "cataract"
 
-        if known_condition == "amd" or "distorted vision" in symptoms:
+        if (
+            known_condition == "amd"
+            or "distorted vision" in symptoms_lower
+            or any("wavy" in symptom for symptom in symptoms_lower)
+            or any("center of vision" in symptom for symptom in symptoms_lower)
+        ):
             return "amd"
 
-        if known_condition == "dry eye" or "dryness" in symptoms:
+        if known_condition == "dry eye" or "dryness" in symptoms_lower:
             return "dry eye"
 
-        if "redness" in symptoms and "pain" in symptoms:
+        if "redness" in symptoms_lower and "pain" in symptoms_lower:
             return "acute red eye"
 
         return "dry eye"
