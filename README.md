@@ -6,7 +6,7 @@
 
 ---
 
-## Table of Contents
+## 📚 Table of Contents
 
 1. Overview
 2. Important Clarification
@@ -33,7 +33,7 @@
 
 ---
 
-## Overview
+## 🔍 Overview
 
 This project implements a hybrid AI system for eyecare triage and patient education.
 
@@ -51,7 +51,7 @@ The system is intended for educational and triage support purposes only and does
 
 ---
 
-## Important Clarification
+## ⚠️ Important Clarification
 
 This project combines a real LLM-powered intake agent with deterministic downstream modules.
 
@@ -61,7 +61,7 @@ The downstream triage, retrieval, and response components remain rule-based and 
 
 ---
 
-## Clinical Motivation
+## 🏥 Clinical Motivation
 
 Eye symptoms can range from mild irritation to sight-threatening emergencies.
 
@@ -77,7 +77,7 @@ This project demonstrates how AI systems can support early triage while maintain
 
 ---
 
-## Problem Statement
+## 🎯 Problem Statement
 
 Develop an educational clinical decision-support system that can:
 
@@ -91,7 +91,7 @@ Develop an educational clinical decision-support system that can:
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
 ```text
 User Input
@@ -117,7 +117,7 @@ Final Educational Recommendation
 
 ---
 
-## How It Works
+## ⚙️ How It Works
 
 ### Step 1 — Symptom Capture
 
@@ -168,7 +168,7 @@ The system returns:
 
 ---
 
-## How the LLM Works
+## 🧠 How the LLM Works
 
 The `llm_intake_agent.py` module sends the user's symptom description to the local Ollama API:
 
@@ -205,7 +205,7 @@ Straight lines look wavy and the center of my vision looks off.
 
 ---
 
-## Key Design Decisions
+## 🧠 Key Design Decisions
 
 ### Hybrid AI Architecture
 
@@ -233,7 +233,7 @@ Each component has a single responsibility and can be independently upgraded.
 
 ---
 
-## Key Features
+## ✨ Key Features
 
 * Ollama-powered natural language symptom interpretation
 * Local Llama 3.2 model
@@ -248,7 +248,7 @@ Each component has a single responsibility and can be independently upgraded.
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Component            | Technology                      |
 | -------------------- | ------------------------------- |
@@ -264,7 +264,7 @@ Each component has a single responsibility and can be independently upgraded.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 modular-eyecare-triage-rag-mcp-evals/
@@ -297,7 +297,7 @@ modular-eyecare-triage-rag-mcp-evals/
 
 ---
 
-## Prerequisites
+## 📋 Prerequisites
 
 Before running the project, ensure you have:
 
@@ -308,7 +308,7 @@ Before running the project, ensure you have:
 
 ---
 
-## Installation
+## 🚀 Installation
 
 ```bash
 git clone https://github.com/danybortey-code/modular-eyecare-triage-rag-mcp-evals.git
@@ -319,7 +319,7 @@ ollama pull llama3.2
 
 ---
 
-## Running the Application
+## ▶️ Running the Application
 
 ### 1. Start Ollama
 
@@ -347,7 +347,7 @@ python mcp_server/server.py
 
 ---
 
-## Testing and Validation
+## 🧪 Testing and Validation
 
 The project includes a structured evaluation dataset:
 
@@ -368,7 +368,7 @@ Each test case contains:
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
 The MCP server exposes reusable tools:
 
@@ -380,7 +380,7 @@ These tools allow external AI systems to interact with the project programmatica
 
 ---
 
-## Example Clinical Scenarios
+## 🩺 Example Clinical Scenarios
 
 ### AMD
 
@@ -403,7 +403,7 @@ These tools allow external AI systems to interact with the project programmatica
 
 ---
 
-## Future Enhancements
+## 🔮 Future Enhancements
 
 * Expand the ophthalmology knowledge base
 * Add image and PDF interpretation
@@ -413,7 +413,7 @@ These tools allow external AI systems to interact with the project programmatica
 
 ---
 
-## Learning Outcomes
+## 📘 Learning Outcomes
 
 This project provided hands-on experience in:
 
@@ -431,6 +431,6 @@ This project provided hands-on experience in:
 
 ---
 
-## Disclaimer
+## ⚕️ Disclaimer
 
 This application is intended solely for educational and triage support purposes and should not be used as a substitute for professional medical advice, diagnosis, or treatment.
