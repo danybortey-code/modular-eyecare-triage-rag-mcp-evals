@@ -1,4 +1,5 @@
 # 👁️ Modular Eyecare Triage and Patient Education System
+
 ### A Hybrid Clinical Decision-Support Prototype with LLM Intake, RAG, MCP, and Automated Evaluation
 
 > A healthcare-focused educational application that interprets free-text eye symptom descriptions, extracts structured clinical information using a local large language model, retrieves condition-specific knowledge, assigns urgency levels, and provides safe, non-diagnostic recommendations.
@@ -13,20 +14,22 @@
 4. Problem Statement
 5. System Architecture
 6. How It Works
-7. Key Design Decisions
-8. Key Features
-9. Tech Stack
-10. Project Structure
-11. Installation
-12. Running the Application
-13. Testing and Validation
-14. MCP Integration
-15. Example Clinical Scenarios
-16. Limitations
-17. Future Enhancements
-18. Learning Outcomes
-19. Author
-20. Disclaimer
+7. How the LLM Works
+8. Key Design Decisions
+9. Key Features
+10. Tech Stack
+11. Project Structure
+12. Prerequisites
+13. Installation
+14. Running the Application
+15. Testing and Validation
+16. MCP Integration
+17. Example Clinical Scenarios
+18. Limitations
+19. Future Enhancements
+20. Learning Outcomes
+21. Author
+22. Disclaimer
 
 ---
 
@@ -64,11 +67,11 @@ Eye symptoms can range from mild irritation to sight-threatening emergencies.
 
 Examples of serious ophthalmic conditions include:
 
-- Retinal detachment
-- Acute angle-closure glaucoma
-- Wet age-related macular degeneration
-- Corneal ulcer
-- Optic neuritis
+* Retinal detachment
+* Acute angle-closure glaucoma
+* Wet age-related macular degeneration
+* Corneal ulcer
+* Optic neuritis
 
 This project demonstrates how AI systems can support early triage while maintaining strict safety boundaries.
 
@@ -93,128 +96,177 @@ Develop an educational clinical decision-support system that can:
 ```text
 User Input
     ↓
-LLM Intake Agent (Ollama)
+LLM Intake Agent (llm_intake_agent.py)
     ↓
-Structured Case Data
+Ollama Local API
     ↓
-Knowledge + Triage Agent
+Llama 3.2 Model
     ↓
-RAG Pipeline
+Structured Case Data (JSON)
     ↓
-Urgency Assignment
+Knowledge + Triage Agent (knowledge_triage_agent.py)
     ↓
-Response + Safety Agent
+RAG Pipeline (rag_pipeline.py)
+    ↓
+Urgency Assignment (triage_rules.py)
+    ↓
+Response + Safety Agent (response_safety_agent.py)
     ↓
 Final Educational Recommendation
+```
 
-How It Works
+---
 
-Step 1 — Symptom Capture
+## How It Works
 
-The user enters a free-text description of their eye symptoms, such as:
+### Step 1 — Symptom Capture
 
-"Straight lines look wavy and the center of my vision looks off."
+The user describes an eye concern in natural language.
 
-Step 2 — LLM Intake Agent
+### Step 2 — LLM-Based Intake
 
-The LLMIntakeAgent sends the symptom description to a local Ollama model (llama3.2) and extracts:
+The `LLMIntakeAgent` sends the symptom description to a locally hosted Llama 3.2 model through Ollama.
 
-Symptoms
-Duration
-Pain
-Redness
-Vision change
-Discharge
-Light sensitivity
-Known eye conditions
-Medication context
+### Step 3 — Structured JSON Extraction
 
-If the LLM is unavailable, the system automatically falls back to the rule-based IntakeAgent.
+The model returns structured clinical information including:
 
-Step 3 — Knowledge + Triage Agent
+* `symptoms`
+* `duration`
+* `pain`
+* `redness`
+* `vision_change`
+* `discharge`
+* `light_sensitivity`
+* `known_eye_condition`
+* `medication_context`
 
-The KnowledgeTriageAgent:
+### Step 4 — Rule-Based Fallback
 
-Maps symptoms to likely conditions.
-Retrieves condition-specific knowledge.
-Assigns a triage category.
+If the LLM is unavailable, the system automatically falls back to the deterministic `IntakeAgent`.
 
-Step 4 — Retrieval-Augmented Generation (RAG)
+### Step 5 — Knowledge and Triage
 
-The rag_pipeline.py module retrieves educational information from local ophthalmology text files.
+The `KnowledgeTriageAgent`:
 
-Step 5 — Response + Safety Agent
+* Identifies the most likely ophthalmic topic
+* Retrieves supporting educational knowledge
+* Assigns an urgency category
 
-The ResponseSafetyAgent generates a patient-friendly explanation and includes a medical disclaimer.
+### Step 6 — Safety-Aware Response Generation
 
-Step 6 — Final Output
+The `ResponseSafetyAgent` generates a patient-friendly explanation and includes a medical disclaimer.
+
+### Step 7 — Final Output
 
 The system returns:
 
-Structured case summary
-Retrieved knowledge
-Urgency level
-Educational recommendation
-Key Design Decisions
-Hybrid Architecture
+* Structured case summary
+* Retrieved educational knowledge
+* Urgency level
+* Patient recommendation
 
-Combines LLM-powered extraction with deterministic downstream logic.
+---
 
-Rule-Based Clinical Reasoning
+## How the LLM Works
 
-Provides transparent and interpretable triage decisions.
+The `llm_intake_agent.py` module sends the user's symptom description to the local Ollama API:
 
-Retrieval-Based Knowledge
+```text
+http://localhost:11434/api/generate
+```
 
-Medical content is stored in modular text files rather than hardcoded responses.
+The `llama3.2` model is instructed to return structured JSON output.
 
-Safety-First Design
+### Example Input
+
+```text
+Straight lines look wavy and the center of my vision looks off.
+```
+
+### Example Output
+
+```json
+{
+  "symptoms": [
+    "straight lines look wavy",
+    "center of vision looks off"
+  ],
+  "duration": "unspecified",
+  "pain": false,
+  "redness": false,
+  "vision_change": true,
+  "discharge": false,
+  "light_sensitivity": false,
+  "known_eye_condition": null,
+  "medication_context": null
+}
+```
+
+---
+
+## Key Design Decisions
+
+### Hybrid AI Architecture
+
+Combines probabilistic LLM reasoning with deterministic clinical logic.
+
+### Structured JSON Output
+
+Constrains the model to return machine-readable data for transparency and downstream processing.
+
+### Rule-Based Fallback
+
+If the LLM fails or times out, the system automatically reverts to the original deterministic intake module.
+
+### Safety-First Approach
 
 Educational guidance only; no diagnosis or treatment recommendations.
 
-Automated Evaluation
+### Local Inference with Ollama
 
-Built-in testing framework for objective validation.
+Runs entirely on the local machine, eliminating API costs and improving privacy.
 
-Key Features
-Local LLM-powered symptom extraction using Ollama
+### Modular Design
 
-Automatic rule-based fallback if the LLM is unavailable
+Each component has a single responsibility and can be independently upgraded.
 
-Retrieval-Augmented Generation (RAG)
+---
 
-Rule-based urgency classification
+## Key Features
 
-MCP tool server
+* Ollama-powered natural language symptom interpretation
+* Local Llama 3.2 model
+* Structured JSON extraction
+* Automatic rule-based fallback
+* Retrieval-Augmented Generation (RAG)
+* Rule-based urgency classification
+* Response safety layer
+* MCP server integration
+* Automated evaluation framework
+* Public GitHub repository
 
-Automated evaluation framework
+---
 
-Safety disclaimers
+## Tech Stack
 
-Professional GitHub documentation
+| Component            | Technology                      |
+| -------------------- | ------------------------------- |
+| Programming Language | Python 3                        |
+| LLM Runtime          | Ollama                          |
+| Model                | Llama 3.2                       |
+| API Interface        | Local REST API using `requests` |
+| Retrieval Layer      | Local text files                |
+| Protocol Layer       | FastMCP                         |
+| Evaluation           | JSONL + Python                  |
+| Version Control      | Git and GitHub                  |
+| IDE                  | VS Code                         |
 
-Tech Stack
+---
 
-Component	Technology
+## Project Structure
 
-Programming Language	Python 3
-
-Local LLM	Ollama (llama3.2)
-
-Retrieval Layer	Local text files
-
-Protocol Layer	FastMCP
-
-Evaluation	JSONL + Python
-
-HTTP Client	requests
-
-Version Control	Git & GitHub
-
-IDE	VS Code
-
-Project Structure
-
+```text
 modular-eyecare-triage-rag-mcp-evals/
 ├── data/
 │   ├── glaucoma/
@@ -241,114 +293,144 @@ modular-eyecare-triage-rag-mcp-evals/
 │
 ├── README.md
 └── .gitignore
+```
 
-Installation
-1. Clone the Repository
+---
+
+## Prerequisites
+
+Before running the project, ensure you have:
+
+* Python 3.10 or later
+* Ollama installed
+* The `llama3.2` model downloaded
+* Git installed
+
+---
+
+## Installation
+
+```bash
 git clone https://github.com/danybortey-code/modular-eyecare-triage-rag-mcp-evals.git
 cd modular-eyecare-triage-rag-mcp-evals
-
-2. Install Python Dependencies
 pip install requests fastmcp
-
-3. Install Ollama
-
-Download and install Ollama from:
-
-https://ollama.com/download
-
-4. Download the Model
 ollama pull llama3.2
-Running the Application
-Start the Ollama Model
+```
+
+---
+
+## Running the Application
+
+### 1. Start Ollama
+
+```bash
 ollama run llama3.2
+```
 
-Keep this terminal open.
+### 2. Run the Main Pipeline
 
-Run the Main Pipeline
+```bash
 python src/main.py
-Run Automated Evaluations
+```
+
+### 3. Run Automated Evaluations
+
+```bash
 python src/run_evals.py
-Start the MCP Server
+```
+
+### 4. Start the MCP Server
+
+```bash
 python mcp_server/server.py
-Testing and Validation
+```
+
+---
+
+## Testing and Validation
 
 The project includes a structured evaluation dataset:
 
+```text
 evals/eval_cases.jsonl
+```
 
 Each test case contains:
 
-User input
-Expected topic
-Expected urgency
-Example Results
-Topic Accuracy: 4/4 (100%)
-Urgency Accuracy: 4/4 (100%)
-MCP Integration
+* User input
+* Expected topic
+* Expected urgency
+
+### Example Results
+
+* Topic Accuracy: **4/4 (100%)**
+* Urgency Accuracy: **4/4 (100%)**
+
+---
+
+## MCP Integration
 
 The MCP server exposes reusable tools:
 
-search_eye_knowledge(topic)
-get_red_flag_rules()
-get_patient_education(topic)
+* `search_eye_knowledge(topic)`
+* `get_red_flag_rules()`
+* `get_patient_education(topic)`
 
 These tools allow external AI systems to interact with the project programmatically.
 
-Example Clinical Scenarios
-Dry Eye
+---
 
-Input: "My eyes feel dry after staring at screens all day."
+## Example Clinical Scenarios
 
-Output:
+### AMD
 
-Topic: Dry Eye
-Urgency: Self-care / education
-Cataract
+**Input:** "Straight lines look wavy and the center of my vision looks off."
 
-Input: "My vision is cloudy and headlights bother me at night."
+**Output:**
 
-Output:
+* Topic: AMD
+* Urgency: Urgent same-day evaluation
 
-Topic: Cataract
-Urgency: Routine eye appointment
-AMD
+### Acute Red Eye
 
-Input: "Straight lines look wavy and the center of my vision looks off."
+**Input:** "My eye is red and painful and my vision is blurry since yesterday."
 
-Output:
+**Output:**
 
-Topic: AMD
-Urgency: Urgent same-day evaluation
-Acute Red Eye
+* Topic: Acute Red Eye
+* Urgency: Emergency care
 
-Input: "My eye is red and painful and my vision is blurry since yesterday."
 
-Output:
+---
 
-Topic: Acute Red Eye
-Urgency: Emergency care
+## Future Enhancements
 
-Future Enhancements
-Expand the ophthalmology knowledge base.
-Add image and PDF interpretation.
-Build a Streamlit web interface.
-Increase the size of the evaluation dataset.
-Integrate external clinical data sources.
-Learning Outcomes
+* Expand the ophthalmology knowledge base
+* Add image and PDF interpretation
+* Build a Streamlit web interface
+* Increase the size of the evaluation dataset
+* Integrate external clinical data sources
+
+---
+
+## Learning Outcomes
 
 This project provided hands-on experience in:
 
-Large Language Model (LLM) integration
-Prompt engineering and structured JSON extraction
-Retrieval-Augmented Generation (RAG)
-Rule-based clinical reasoning
-Model Context Protocol (MCP)
-Automated evaluation frameworks
-Git and GitHub project management
+* Large Language Model (LLM) integration
+* Prompt engineering and structured JSON extraction
+* Retrieval-Augmented Generation (RAG)
+* Rule-based clinical reasoning
+* Model Context Protocol (MCP)
+* Automated evaluation frameworks
+* Git and GitHub project management
 
 
-GitHub: https://github.com/danybortey-code
-Repository: https://github.com/danybortey-code/modular-eyecare-triage-rag-mcp-evals
-Disclaimer
+* GitHub: [https://github.com/danybortey-code](https://github.com/danybortey-code)
+* Repository: [https://github.com/danybortey-code/modular-eyecare-triage-rag-mcp-evals](https://github.com/danybortey-code/modular-eyecare-triage-rag-mcp-evals)
+
+---
+
+## Disclaimer
 
 This application is intended solely for educational and triage support purposes and should not be used as a substitute for professional medical advice, diagnosis, or treatment.
